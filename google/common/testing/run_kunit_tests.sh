@@ -8,7 +8,9 @@
 #   adb root
 #   adb push kunit_tests.zip /data/local/tmp/test_folder
 #   adb shell unzip /data/local/tmp/test_folder/kunit_tests.zip -d /data/local/tmp/test_folder
-#   adb shell sh /data/local/tmp/test_folder/run_kunit_tests.sh
+#   # The [filter] parameter is optional and allows you to run specific suites or tests.
+#   # For example: "apc_irm_test*" or "apc_irm_test.my_test_case" (quotes are necessary).
+#   adb shell sh /data/local/tmp/test_folder/run_kunit_tests.sh [filter]
 
 KUNIT_TEST_DIR="$(dirname "$(readlink -f "$0")")"
 KUNIT_KO="kunit.ko"
@@ -25,6 +27,7 @@ function umount_debugfs() {
 }
 
 function test_kernel_kunit() {
+    local filter="$1"
     local mount_debugfs=false
     local all_modules_result=true
 
@@ -34,7 +37,12 @@ function test_kernel_kunit() {
         mount_debugfs=true
     fi
 
-    if ! insmod "${KUNIT_MODULES_DIR}/${KUNIT_KO}" enable=1; then
+    local kunit_params="enable=1"
+    if [[ -n "${filter}" ]]; then
+        kunit_params+=" filter_glob=${filter}"
+    fi
+
+    if ! insmod "${KUNIT_MODULES_DIR}/${KUNIT_KO}" ${kunit_params}; then
         log "Failed to load ${KUNIT_KO}."
         umount_debugfs "${mount_debugfs}"
         return 1
@@ -83,18 +91,24 @@ function test_module() {
         return 1
     fi
 
-    local results="$(cat /sys/kernel/debug/kunit/*/results)"
+    local results
+    if ! results="$(cat /sys/kernel/debug/kunit/*/results 2>/dev/null)"; then
+        rmmod "${module_name}"
+        log "Test result for module ${module}: No tests executed (skipped by filter?)"
+        return 0
+    fi
+
     log "KUnit Test Result Details:"
     echo "${results}"
     rmmod "${module_name}"
 
     if grep -q 'not ok' <<< "${results}"; then
-        log "Test result for module "${module}": Failed"
+        log "Test result for module ${module}: Failed"
         return 1
     fi
-    log "Test result for module "${module}": Passed"
+    log "Test result for module ${module}: Passed"
     return 0
 }
 
 # Main Execution
-test_kernel_kunit
+test_kernel_kunit "$1"

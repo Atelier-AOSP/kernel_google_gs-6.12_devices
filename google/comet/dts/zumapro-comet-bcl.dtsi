@@ -39,7 +39,7 @@
 	batoilo_otg_bat_open_to = <0x8>;    /* 36ms */
 	batoilo_bat_open_to = <0x8>;    /* 36ms */
 	batoilo2_bat_open_to = <0x3>;   /* 12ms */
-	batoilo_rel = <0x3>;   /* 10ms */
+	batoilo_rel = <0x2>;   /* 1ms */
 	batoilo2_rel = <0x2>;   /* 1ms */
 	batoilo_det = <0x1A>;   /* 34ms DEBOUNCE to VDROOP */
 	batoilo2_det = <0x1>;   /* 30us DEBOUNCE to VDROOP */
@@ -85,7 +85,7 @@
 		bat_oilo1_cnt = <1>;
 		bat_oilo2_cnt = <1>;
 		sys_uvlo1 = <IF_VDROOP1>;
-		sys_uvlo2 = <IF_VDROOP2>;
+		sys_uvlo2 = <IF_SHARED>;
 		bat_oilo1 = <IF_INTB>;
 		bat_oilo2 = <IF_VDROOP2>;
 	};

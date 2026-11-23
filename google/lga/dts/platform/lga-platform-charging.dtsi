@@ -19,6 +19,10 @@
 	#include "lga-max777xx-spmi.dtsi"
 };
 
+&max77779_chg {
+	max77779,wlcin-is-child;
+};
+
 &max77779_pmic_irq {
 	pinctrl-0 = <&ifpmic2ap_int_l_1v2_aw3>;
 
@@ -55,4 +59,38 @@
 
 	interrupt-parent = <&max77779_chg>;
 	interrupts = <12 IRQ_TYPE_LEVEL_LOW>;
+
+	chargers {
+		max77779 {
+			wired,config {
+				power-supply = "main-charger";
+			};
+			wireless,config {
+				power-supply = "wlcin-max77779";
+			};
+		};
+		pca9468 {
+			is-cp;
+			wired,config {
+				power-supply = "dc-mains";
+			};
+			wireless,config {
+				status = "disabled";
+			};
+		};
+		ln8411 {
+			status = "disabled";
+			is-cp;
+			wired,config {
+				power-supply = "ln8411-mains";
+			};
+			wireless,config {
+				power-supply = "wlcin-ln8411";
+				requirements {
+					power-low = <15000000>;
+					power-min = <10000000>;
+				};
+			};
+		};
+	};
 };

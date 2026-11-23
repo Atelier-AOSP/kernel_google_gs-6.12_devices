@@ -281,36 +281,6 @@
 		mba-ip-version = <2 0>;
 	};
 
-	gsa_ap_1_mba_client_1: gsa_ap_1_mba_client_1@e011000 {
-		compatible = "google,mba-ctrl";
-		reg = <0x0 0xe011000 0x0 0x1000>;
-		interrupts = <GIC_SPI SSWRP_GSA_AP_1_CLIENT_MBA_IRQ IRQ_TYPE_LEVEL_HIGH 0>;
-		#mbox-cells = <1>;
-		google,syscon-phandle = <&gsa_mba_syscon 1>;
-		mba-ip-version = <2 0>;
-		status = "disabled";
-	};
-
-	gsa_ap_2_mba_client_2: gsa_ap_2_mba_client_2@e012000 {
-		compatible = "google,mba-ctrl";
-		reg = <0x0 0xe012000 0x0 0x1000>;
-		interrupts = <GIC_SPI SSWRP_GSA_AP_2_CLIENT_MBA_IRQ IRQ_TYPE_LEVEL_HIGH 0>;
-		#mbox-cells = <1>;
-		google,syscon-phandle = <&gsa_mba_syscon 2>;
-		mba-ip-version = <2 0>;
-		status = "disabled";
-	};
-
-	gsa_ap_3_mba_client_3: gsa_ap_3_mba_client_3@e013000 {
-		compatible = "google,mba-ctrl";
-		reg = <0x0 0xe013000 0x0 0x1000>;
-		interrupts = <GIC_SPI SSWRP_GSA_AP_3_CLIENT_MBA_IRQ IRQ_TYPE_LEVEL_HIGH 0>;
-		#mbox-cells = <1>;
-		google,syscon-phandle = <&gsa_mba_syscon 3>;
-		mba-ip-version = <2 0>;
-		status = "disabled";
-	};
-
 	gdmc_ap_non_secure_req_mba_client_2: gdmc_ap_non_secure_req_mba_client_2@6262000 {
 		compatible = "google,mba-ctrl";
 		reg = <0x0 0x6262000 0x0 0x1000>;

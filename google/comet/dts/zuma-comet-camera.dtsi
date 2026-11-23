@@ -342,7 +342,7 @@
 					<1000
 					 1500
 					 1000
-					 1000>;
+					 2000>;
 
 				power-down-seqs =
 					"mclk_off",
@@ -384,7 +384,7 @@
 					<1000
 					 1500
 					 1000
-					 1000>;
+					 2000>;
 
 				power-down-seqs =
 					"mclk_off",
@@ -647,7 +647,7 @@
 				resume-seqs = "reset";
 				resume-seq-types = "gpio";
 				/* from XCLR to first i2c */
-				resume-seq-delays-us = <2000>;
+				resume-seq-delays-us = <8500>;
 
 				/* suspend sequence */
 				suspend-seqs = "reset";

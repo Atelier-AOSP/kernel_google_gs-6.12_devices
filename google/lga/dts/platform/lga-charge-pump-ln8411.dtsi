@@ -10,7 +10,7 @@ ln8411_dc: ln8411@6e {
 	compatible = "ln8411";
 	reg = <0x6e>;
 
-	ln8411,psy_name = "dc-mains";
+	ln8411,psy_name = "ln8411-mains";
 
 	ln8411,input-itopoff = <500000>; /* 500mA */
 

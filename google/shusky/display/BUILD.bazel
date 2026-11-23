@@ -1,6 +1,10 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-load("@kleaf//build/kernel/kleaf:kernel.bzl", "ddk_module", "kernel_module_group")
+load("@kleaf//build/kernel/kleaf:kernel.bzl", "ddk_module")
+
+package(default_visibility = [
+    "//private/devices/google/shusky:__subpackages__",
+])
 
 ddk_module(
     name = "panel-google-bigsurf",
@@ -43,6 +47,7 @@ ddk_module(
         "//common:all_headers_aarch64",
         "//private/google-modules/display/common:ddk_headers",
         "//private/google-modules/display/common/gs_drm:gs-drm-connector",
+        "//private/google-modules/display/common/gs_panel:gs-panel",
         "//private/google-modules/display/samsung:exynos-drm",
         "//private/google-modules/display/samsung:headers",
         "//private/google-modules/display/samsung/panel:panel-common",
@@ -94,17 +99,5 @@ ddk_module(
         "//private/google-modules/display/common:ddk_headers",
         "//private/google-modules/display/samsung:headers",
         "//private/google-modules/soc/gs:headers",
-    ],
-)
-
-kernel_module_group(
-    name = "drm_panel.google",
-    srcs = [
-        ":panel-google-bigsurf",
-        ":panel-google-hk3",
-        ":panel-google-shoreline",
-    ],
-    visibility = [
-        "//private/devices/google:__subpackages__",
     ],
 )

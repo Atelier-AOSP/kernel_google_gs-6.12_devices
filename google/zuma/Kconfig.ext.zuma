@@ -14,6 +14,8 @@ source "$(KCONFIG_SOC_GS_PREFIX)drivers/dma-buf/heaps/Kconfig"
 
 source "$(KCONFIG_SOC_GS_PREFIX)drivers/dma/Kconfig"
 
+source "$(KCONFIG_SOC_GS_PREFIX)drivers/gpu/exynos/Kconfig"
+
 source "$(KCONFIG_SOC_GS_PREFIX)drivers/i2c/busses/Kconfig"
 
 source "$(KCONFIG_SOC_GS_PREFIX)drivers/iio/Kconfig"
@@ -38,7 +40,7 @@ source "$(KCONFIG_SOC_GS_PREFIX)drivers/performance/gs_perf_mon/Kconfig"
 
 source "$(KCONFIG_SOC_GS_PREFIX)drivers/performance/lat_governors/Kconfig"
 
-source "$(KCONFIG_SOC_GS_PREFIX)drivers/phy/Kconfig"
+source "$(KCONFIG_SOC_GS_PREFIX)drivers/phy/samsung/Kconfig"
 
 source "$(KCONFIG_SOC_GS_PREFIX)drivers/pinctrl/Kconfig"
 
@@ -64,7 +66,9 @@ source "$(KCONFIG_SOC_GS_PREFIX)drivers/ufs/Kconfig"
 
 source "$(KCONFIG_SOC_GS_PREFIX)drivers/usb/Kconfig"
 
-source "$(KCONFIG_SOC_GS_PREFIX)drivers/video/Kconfig"
+source "$(KCONFIG_SOC_GS_PREFIX)drivers/usb/role-sw/Kconfig"
+
+source "$(KCONFIG_SOC_GS_PREFIX)drivers/video/backlight/Kconfig"
 
 source "$(KCONFIG_SOC_GS_PREFIX)drivers/watchdog/Kconfig"
 
@@ -87,5 +91,7 @@ source "$(KCONFIG_EXT_MODULES_PREFIX)private/google-modules/fingerprint/goodix/f
 source "$(KCONFIG_EXT_MODULES_PREFIX)private/google-modules/power/mitigation/Kconfig"
 
 source "$(KCONFIG_EXT_MODULES_PREFIX)private/google-modules/power/reset/Kconfig"
+
+source "$(KCONFIG_EXT_MODULES_PREFIX)private/google-modules/touch/common/Kconfig"
 
 source "$(KCONFIG_EXT_MODULES_PREFIX)private/google-modules/trusty/drivers/trusty/Kconfig"

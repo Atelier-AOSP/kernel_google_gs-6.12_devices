@@ -1,6 +1,10 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-load("@kleaf//build/kernel/kleaf:kernel.bzl", "ddk_module", "kernel_module_group")
+load("@kleaf//build/kernel/kleaf:kernel.bzl", "ddk_module")
+
+package(default_visibility = [
+    "//private/devices/google/comet:__subpackages__",
+])
 
 ddk_module(
     name = "panel-gs-ct3a",
@@ -18,7 +22,7 @@ ddk_module(
     deps = [
         "//common:all_headers_aarch64",
         "//private/google-modules/display/common:ddk_headers",
-        "//private/google-modules/display/common/gs_panel",
+        "//private/google-modules/display/common/gs_panel:gs-panel",
         "//private/google-modules/display/samsung:headers",
         "//private/google-modules/soc/gs:headers",
     ],
@@ -40,7 +44,7 @@ ddk_module(
     deps = [
         "//common:all_headers_aarch64",
         "//private/google-modules/display/common:ddk_headers",
-        "//private/google-modules/display/common/gs_panel",
+        "//private/google-modules/display/common/gs_panel:gs-panel",
         "//private/google-modules/display/samsung:headers",
         "//private/google-modules/soc/gs:headers",
     ],
@@ -62,7 +66,7 @@ ddk_module(
     deps = [
         "//common:all_headers_aarch64",
         "//private/google-modules/display/common:ddk_headers",
-        "//private/google-modules/display/common/gs_panel",
+        "//private/google-modules/display/common/gs_panel:gs-panel",
         "//private/google-modules/display/samsung:headers",
         "//private/google-modules/soc/gs:headers",
     ],
@@ -84,7 +88,7 @@ ddk_module(
     deps = [
         "//common:all_headers_aarch64",
         "//private/google-modules/display/common:ddk_headers",
-        "//private/google-modules/display/common/gs_panel",
+        "//private/google-modules/display/common/gs_panel:gs-panel",
         "//private/google-modules/display/samsung:headers",
         "//private/google-modules/soc/gs:headers",
     ],
@@ -106,22 +110,8 @@ ddk_module(
     deps = [
         "//common:all_headers_aarch64",
         "//private/google-modules/display/common:ddk_headers",
-        "//private/google-modules/display/common/gs_panel",
+        "//private/google-modules/display/common/gs_panel:gs-panel",
         "//private/google-modules/display/samsung:headers",
         "//private/google-modules/soc/gs:headers",
-    ],
-)
-
-kernel_module_group(
-    name = "drm_panel.google",
-    srcs = [
-        ":panel-gs-ct3a",
-        ":panel-gs-ct3b",
-        ":panel-gs-ct3c",
-        ":panel-gs-ct3d",
-        ":panel-gs-ct3e",
-    ],
-    visibility = [
-        "//private/devices/google:__subpackages__",
     ],
 )

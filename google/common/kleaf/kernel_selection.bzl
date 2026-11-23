@@ -39,7 +39,7 @@ def _create_prebuilt_target(name, pkg, target):
         if target == "kernel_aarch64_gki_artifacts":
             actual[build] = "{}//kernel_aarch64:{}_signed_gki_artifacts".format(repo, build)
 
-        if target == "kernel_aarch64_images":
+        if target == "kernel_aarch64_system_dlkm_image":
             native.filegroup(
                 name = "{}_{}/{}".format(prefix, build, target),
                 srcs = [

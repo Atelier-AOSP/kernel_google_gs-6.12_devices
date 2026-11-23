@@ -204,18 +204,19 @@
 		channel-max-pending-msgs = <128>;
 		block-channel-threshold = <64>;
 
-		hotword-supported = "true";
-		chre-supported = "true";
-		iommu-config-persistent = "true";
+		hotword-supported;
+		chre-supported;
+		iommu-config-persistent;
+		mmap-use-kernel-heap;
 
 		aoc-coredump-mbox = <19>;
 
-		notify-on-state-transition = "true";
+		notify-on-state-transition;
 
 		gdmc-iface = <&goog_mba_gdmc_iface>;
 
 		gsa-device = <&gsa>;
-		gsa-enabled = "true";
+		gsa-enabled;
 		iif-device = <&iif>;
 	};
 };

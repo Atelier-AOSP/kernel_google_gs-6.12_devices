@@ -72,6 +72,10 @@
 			/* SLC partitions */
 			pt_id =
 				"vpu_p0";
+
+			qchctl_active_mask_0_offset = <0x10>;
+
+			firmware-name = "seurat.bin";
 		};
 
 		codec_3p_ra_axi0: ra@80000 {

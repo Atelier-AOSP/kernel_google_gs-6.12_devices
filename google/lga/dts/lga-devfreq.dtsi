@@ -1,13 +1,11 @@
 // SPDX-License-Identifier: GPL-2.0-only
-#include <dt-bindings/interconnect/google,irm.h>
+#include <dt-bindings/interconnect/google,lga,irm.h>
 #include <dt-bindings/lpcm/pf_state.h>
 
 / {
 	irm_gmc_freq: irm_gmc_freq {
 		compatible = "google,irm-devfreq";
-		irm-client-idx = <IRM_IDX_CPU>;
-		irm-min-clamp-reg = <0x1c>;
-		irm-trigger-reg = <0x40>;
+		google,irm-client-name = "apc";
 
 		gmc_dvfs {
 			dvfs-helper-domain-name = "gmc";

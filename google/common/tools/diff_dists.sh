@@ -1,5 +1,14 @@
-# SPDX-License-Identifier: GPL-2.0-only
 #!/bin/bash
+# SPDX-License-Identifier: GPL-2.0-only
+
+source "$(dirname "$(realpath "${BASH_SOURCE[0]}")")/logging.sh"
+
+USAGE="$(cat <<EOF
+usage: $0 [<options>] <DIST1_DIR> <DIST2_DIR>
+
+Compare outputs of 2 kernel builds.
+EOF
+)"
 
 # Use with grep -w
 IGNORE_FILES=(
@@ -14,7 +23,7 @@ IGNORE_FILES=(
 # Use with grep -w
 DIFF_FILES=(
   '\.config'
-  'kernel-uapi-headers\.tar\.gz'
+  '.*-uapi-headers\.tar\.gz'
   '.*modules\.load'
   '.*modules\.blocklist'
   '.*\.dtb'
@@ -25,52 +34,12 @@ DIFF_FILES=(
 
 DIST1=""
 DIST2=""
-VERBOSE=""
-
-function usage() {
-  cat <<EOF
-usage: $0 [options] <DIST1_DIR> <DIST2_DIR>
-
-Compare outputs of 2 kernel builds.
-
-Options:
-  -v: Verbose.
-  -h: Show this help.
-EOF
-}
-
-function show_usage_and_exit() {
-  usage >&2
-  exit "$1"
-}
-
-function info() {
-  echo "[INFO]" "$@" >&2
-}
-
-function error() {
-  echo "[ERROR]" "$@" >&2
-}
-
-function verbose() {
-  if [[ -n "${VERBOSE}" ]]; then
-    echo "[VERBOSE]" "$@" >&2
-  fi
-}
 
 function parse_args() {
   while (( $# > 0 )); do
     case "$1" in
-      -v)
-        VERBOSE=1
-        ;;
-      -h)
-        usage
-        exit 0
-        ;;
       -*)
-        error "Unknown option: $1"
-        show_usage_and_exit 1
+        logging::set_option_or_out "$1"
         ;;
       *)
         if [[ -z "${DIST1}" ]]; then
@@ -78,8 +47,7 @@ function parse_args() {
         elif [[ -z "${DIST2}" ]]; then
           DIST2="$1"
         else
-          error "Too many args"
-          show_usage_and_exit 1
+          logging::error_usage_out "Too many args"
         fi
         ;;
     esac
@@ -87,19 +55,15 @@ function parse_args() {
   done
 
   if [[ -z "${DIST1}" ]]; then
-    error "Missing <DIST1_DIR>"
-    show_usage_and_exit 1
+    logging::error_usage_out "Missing <DIST1_DIR>"
   elif [[ ! -d "${DIST1}" ]]; then
-    error "${DIST1} is not a directory"
-    show_usage_and_exit 1
+    logging::error_usage_out "${DIST1} is not a directory"
   fi
 
   if [[ -z "${DIST2}" ]]; then
-    error "Missing <DIST2_DIR>"
-    show_usage_and_exit 1
+    logging::error_usage_out "Missing <DIST2_DIR>"
   elif [[ ! -d "${DIST2}" ]]; then
-    error "${DIST2} is not a directory"
-    show_usage_and_exit 1
+    logging::error_usage_out "${DIST2} is not a directory"
   fi
 }
 
@@ -117,25 +81,25 @@ function main() {
   ls -A -1 "${DIST2}" | grep -w -v -f "${tmp}/ignore_files.txt" | sort > "${tmp}/list2.txt"
 
   if ! diff "${tmp}/list1.txt" "${tmp}/list2.txt"; then
-    info "Differences in file list"
+    logging::info "Differences in file list"
     ret=1
   else
-    verbose "No difference in file list"
+    logging::verbose "No difference in file list"
   fi
 
   for f in $(cat "${tmp}/list1.txt" | grep -w -f "${tmp}/diff_files.txt"); do
     if ! diff "${DIST1}/${f}" "${DIST2}/${f}"; then
-      info "Differences in ${f}"
+      logging::info "Differences in ${f}"
       ret=1
     else
-      verbose "No difference in ${f}"
+      logging::verbose "No difference in ${f}"
     fi
   done
 
   rm -rf "${tmp}"
 
   if (( ret == 0 )); then
-    verbose "No difference between 2 dists"
+    logging::verbose "No difference between 2 dists"
   fi
 
   return "${ret}"

@@ -31,10 +31,7 @@ LGA_MODULE_OUTS = [
     "drivers/scsi/sg.ko",
     "drivers/spi/spi-dw.ko",
     "drivers/spi/spi-loopback-test.ko",
-    "drivers/usb/host/xhci-sideband.ko",
     "drivers/watchdog/softdog.ko",
-    "fs/fscache/fscache.ko",
-    "fs/netfs/netfs.ko",
     "net/mac80211/mac80211.ko",
     "net/wireless/cfg80211.ko",
 ]

@@ -51,7 +51,7 @@
 			google_dock: google,dock {
 				status = "okay";
 				compatible = "google,dock";
-				google,dc-psy-name = "dc";
+				google,dc-psy-name = "wlcin-mains";
 				google,psy-type-unknown;
 				pinctrl-names = "default";
 				pinctrl-0 = <&pogo_vout_sw_en>;

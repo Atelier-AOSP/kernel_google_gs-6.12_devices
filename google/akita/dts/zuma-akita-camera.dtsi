@@ -275,7 +275,7 @@
 					 0
 					 1000
 					 0
-					 2000>;
+					 8500>;
 
 				/* Power down sequence */
 				power-down-seqs =

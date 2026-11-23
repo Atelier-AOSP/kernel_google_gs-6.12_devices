@@ -650,7 +650,6 @@
 	regulator-max-microvolt = <3300000>;
 	google,schematic-name = "L25S_FPS";
 	google,subsystem-name = "FPS";
-	regulator-always-on;
 };
 
 &ldo_26s_reg {

@@ -18,7 +18,7 @@
 
 		dpu: dc9x00@200000 {
 			compatible = "verisilicon,dc9x00";
-			reg = <0x200000 0x120000>, <0x390000 0x10000>;
+			reg = <0x200000 0x120000>, <0x00390000 0x10000>;
 			reg-names = "dpu-fe-be", "dpu-gpcsr";
 			interrupt-parent = <&dpu_level_aggr_20_intr>;
 			interrupts = <DPU_GIA_LEVEL_20_AGGR_FE_0_NS_GIA_INPUT_IRQ_DPU_FE_LAYER_FRM_DONE_0>, /* FE0 layer done */
@@ -194,22 +194,25 @@
 					reg = <4>;
 				};
 			};
-		};
 
-		dpu_be: dpu_be@80000 {
-			compatible = "verisilicon,dpu_be";
-		};
+			dpu_be: dpu_be@80000 {
+				compatible = "verisilicon,dpu_be";
+			};
 
-		dpu_fe0: dpu_fe0@0 {
-			compatible = "verisilicon,dpu_fe0";
-		};
+			dpu_fe0: dpu_fe0@0 {
+				compatible = "verisilicon,dpu_fe";
+				fe_id = <0>;
+			};
 
-		dpu_fe1: dpu_fe1@40000 {
-			compatible = "verisilicon,dpu_fe1";
-		};
+			dpu_fe1: dpu_fe1@40000 {
+				compatible = "verisilicon,dpu_fe";
+				fe_id = <1>;
+			};
 
-		dpu_wb: dpu_wb@80000 {
-			compatible = "verisilicon,dpu_wb";
+			dpu_wb: dpu_wb@80000 {
+				compatible = "verisilicon,dpu_wb";
+			};
+
 		};
 
 		dw_mipi_g301_cdphy0: dw_mipi_cdphy@3c0000 {

@@ -23,6 +23,7 @@ p9222: p9222@61 {
 	google,tx2767_icl_ua = <600000>;
 	google,bpp-freq108-disable-ramp;
 	google,wcin_inlim_en-gpios = <&max77779_gpio 0 GPIO_ACTIVE_HIGH>;
+	google,support-usecase-cb;
 
 	pinctrl-names = "default";
 

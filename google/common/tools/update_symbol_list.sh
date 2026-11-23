@@ -11,8 +11,8 @@ else
   GKI_REMOTE="android"
   git -C common/ack branch -D update_symbol_list-delete-after-push
 fi
-GKI_BRANCH="android15-6.6" # Need to push symbol list changes to the main ACK branch (not release branches)
-PIXEL_SYMBOL_LIST="android/abi_gki_aarch64_pixel"
+GKI_BRANCH="android16-6.12" # Need to push changes to the main ACK branch (not release branches)
+PIXEL_SYMBOL_LIST="gki/aarch64/symbols/pixel"
 TARGET=
 FOR_AOSP_PUSH_BRANCH="update_symbol_list-delete-after-push"
 CONTINUE_AFTER_REBASE=0
@@ -201,7 +201,7 @@ function commit_the_symbol_list {
   if [ -n "${CHANGE_ID}" ]; then
     echo "Change-Id: ${CHANGE_ID}" >> ${COMMIT_TEXT}
   fi
-  git -C "${KERNEL_DIR}" commit --quiet -s -F ${COMMIT_TEXT} -- android/
+  git -C "${KERNEL_DIR}" commit --quiet -s -F ${COMMIT_TEXT} -- gki/aarch64/
   if [[ "$?" != 0 ]]; then
     rm -f ${COMMIT_TEXT}
     echo "No symbol list changes detected in ${KERNEL_DIR}."

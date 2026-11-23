@@ -25,8 +25,9 @@
 #include <linux/regulator/consumer.h>
 #include <linux/spinlock.h>
 #include <linux/usb.h>
+#include <linux/usb/google-role-sw.h>
 #include <linux/usb/tcpm.h>
-#include <gvotable.h>
+#include <misc/gvotable.h>
 
 #include "google_bms.h"
 #include "google_psy.h"
@@ -50,7 +51,6 @@
 #define KEEP_HUB_PATH 2
 #define DEFAULT_STATE_MACHINE_ENABLE true
 
-#define POGO_VOTER "POGO"
 #define SSPHY_RESTART_EL "SSPHY_RESTART"
 
 /*
@@ -344,6 +344,7 @@ struct pogo_transport {
 	bool disable_voltage_detection;
 	struct gvotable_election *charger_mode_votable;
 	struct gvotable_election *ssphy_restart_votable;
+	struct gvotable_election *tcpci_comb_votable;
 
 	/* Used for cancellable work such as pogo debouncing */
 	struct kthread_delayed_work pogo_accessory_debounce_work;
@@ -501,9 +502,10 @@ static void switch_to_usbc_locked(struct pogo_transport *pogo_transport)
 	int ret;
 
 	if (pogo_transport->pogo_usb_active) {
-		ret = extcon_set_state_sync(chip->extcon, EXTCON_USB_HOST, 0);
-		logbuffer_log(pogo_transport->log, "%s: %s turning off host for Pogo", __func__,
-			      ret < 0 ? "Failed" : "Succeeded");
+		ret = gvotable_cast_long_vote(pogo_transport->tcpci_comb_votable, POGO_VOTER,
+					      USB_ROLE_HOST, 0);
+		logbuffer_log(pogo_transport->log, "%s: %s to vote off host", __func__, ret < 0 ?
+			      "Failed" : "Succeeded");
 		pogo_transport->pogo_usb_active = false;
 	}
 
@@ -538,10 +540,10 @@ static void switch_to_pogo_locked(struct pogo_transport *pogo_transport)
 
 	data_alt_path_active(chip, true);
 	if (chip->data_active) {
-		ret = extcon_set_state_sync(chip->extcon, chip->active_data_role == TYPEC_HOST ?
-					    EXTCON_USB_HOST : EXTCON_USB, 0);
-
-		logbuffer_log(pogo_transport->log, "%s turning off %s", ret < 0 ?
+		ret = gvotable_cast_long_vote(pogo_transport->tcpci_comb_votable, POGO_VOTER,
+					      chip->active_data_role == TYPEC_HOST ?
+					      USB_ROLE_HOST : USB_ROLE_DEVICE, 0);
+		logbuffer_log(pogo_transport->log, "%s: %s to vote off %s", __func__, ret < 0 ?
 			      "Failed" : "Succeeded", chip->active_data_role == TYPEC_HOST ?
 			      "Host" : "Device");
 		chip->data_active = false;
@@ -557,8 +559,9 @@ static void switch_to_pogo_locked(struct pogo_transport *pogo_transport)
 	gpiod_set_value(pogo_transport->pogo_data_mux_gpio, 1);
 	logbuffer_log(pogo_transport->log, "POGO: data-mux:%d",
 		      gpiod_get_value(pogo_transport->pogo_data_mux_gpio));
-	ret = extcon_set_state_sync(chip->extcon, EXTCON_USB_HOST, 1);
-	logbuffer_log(pogo_transport->log, "%s: %s turning on host for Pogo", __func__, ret < 0 ?
+	ret = gvotable_cast_long_vote(pogo_transport->tcpci_comb_votable, POGO_VOTER,
+				      USB_ROLE_HOST, 1);
+	logbuffer_log(pogo_transport->log, "%s: %s to cast vote on host", __func__, ret < 0 ?
 		      "Failed" : "Succeeded");
 	pogo_transport->pogo_usb_active = true;
 	/* pogo_transport->pogo_usb_active updated */
@@ -580,10 +583,10 @@ static void switch_to_hub_locked(struct pogo_transport *pogo_transport)
 
 	/* if usb-c is active, disable it */
 	if (chip->data_active) {
-		ret = extcon_set_state_sync(chip->extcon, chip->active_data_role == TYPEC_HOST ?
-					    EXTCON_USB_HOST : EXTCON_USB, 0);
-
-		logbuffer_log(pogo_transport->log, "%s turning off %s", ret < 0 ?
+		ret = gvotable_cast_long_vote(pogo_transport->tcpci_comb_votable, POGO_VOTER,
+					      chip->active_data_role == TYPEC_HOST ?
+					      USB_ROLE_HOST : USB_ROLE_DEVICE, 0);
+		logbuffer_log(pogo_transport->log, "%s: %s to vote off %s", __func__, ret < 0 ?
 			      "Failed" : "Succeeded", chip->active_data_role == TYPEC_HOST ?
 			      "Host" : "Device");
 		chip->data_active = false;
@@ -591,9 +594,10 @@ static void switch_to_hub_locked(struct pogo_transport *pogo_transport)
 
 	/* if pogo-usb is active, disable it */
 	if (pogo_transport->pogo_usb_active) {
-		ret = extcon_set_state_sync(chip->extcon, EXTCON_USB_HOST, 0);
-		logbuffer_log(pogo_transport->log, "%s: %s turning off host for Pogo", __func__,
-			      ret < 0 ? "Failed" : "Succeeded");
+		ret = gvotable_cast_long_vote(pogo_transport->tcpci_comb_votable, POGO_VOTER,
+					      USB_ROLE_HOST, 0);
+		logbuffer_log(pogo_transport->log, "%s: %s to vote off host", __func__, ret < 0 ?
+			      "Failed" : "Succeeded");
 		/*
 		 * Skipping KOBJ_CHANGE here as it's a transient state. Should be changed if the
 		 * function logic changes to having branches to exit the function before
@@ -632,8 +636,9 @@ static void switch_to_hub_locked(struct pogo_transport *pogo_transport)
 	if (pogo_transport->polarity == TYPEC_POLARITY_CC2)
 		pogo_transport_update_polarity(pogo_transport, pogo_transport->polarity, false);
 
-	ret = extcon_set_state_sync(chip->extcon, EXTCON_USB_HOST, 1);
-	logbuffer_log(pogo_transport->log, "%s: %s turning on host for hub", __func__, ret < 0 ?
+	ret = gvotable_cast_long_vote(pogo_transport->tcpci_comb_votable, POGO_VOTER,
+				      USB_ROLE_HOST, 1);
+	logbuffer_log(pogo_transport->log, "%s: %s to cast vote on host", __func__, ret < 0 ?
 		      "Failed" : "Succeeded");
 
 	pogo_transport->pogo_usb_active = true;
@@ -2959,8 +2964,14 @@ static int init_pogo_ovp_gpio(struct pogo_transport *pogo_transport)
 {
 	int ret;
 
+	/*
+	 * TODO: Move to GPIOD_FLAG_SHARED when the Pixel kernel is updated to a version containing
+	 * the improved shared GPIO infrastructure. GPIOD_FLAGS_BIT_NONEXCLUSIVE is a temporary hack
+	 * that lacks locking/arbitration and is slated for deprecation.
+	 */
 	pogo_transport->pogo_ovp_en_gpio = devm_gpiod_get_optional(pogo_transport->dev,
-								   "pogo-ovp-en", GPIOD_ASIS);
+								   "pogo-ovp-en",
+							GPIOD_ASIS | GPIOD_FLAGS_BIT_NONEXCLUSIVE);
 
 	if (!pogo_transport->pogo_ovp_en_gpio)
 		return 0;
@@ -3068,6 +3079,14 @@ static int pogo_transport_probe(struct platform_device *pdev)
 		dev_err(pogo_transport->dev, "pogo psy not up\n");
 		ret = -EPROBE_DEFER;
 		goto destroy_worker;
+	}
+
+	pogo_transport->tcpci_comb_votable = gvotable_election_get_handle(COMBINED_ROLE_VOTABLE);
+	if (IS_ERR_OR_NULL(pogo_transport->tcpci_comb_votable)) {
+		dev_err(pogo_transport->dev, "probe deferred due to gvotable %s err (%ld)\n",
+			COMBINED_ROLE_VOTABLE, PTR_ERR(pogo_transport->tcpci_comb_votable));
+		ret = -EPROBE_DEFER;
+		goto psy_put;
 	}
 
 	pogo_transport->extcon = devm_extcon_dev_allocate(pogo_transport->dev, pogo_extcon_cable);
@@ -3213,7 +3232,7 @@ free_np:
 	return ret;
 }
 
-static int pogo_transport_remove(struct platform_device *pdev)
+static void pogo_transport_remove(struct platform_device *pdev)
 {
 	struct pogo_transport *pogo_transport = platform_get_drvdata(pdev);
 	struct dentry *dentry;
@@ -3254,8 +3273,6 @@ static int pogo_transport_remove(struct platform_device *pdev)
 	power_supply_put(pogo_transport->pogo_psy);
 	kthread_destroy_worker(pogo_transport->wq);
 	logbuffer_unregister(pogo_transport->log);
-
-	return 0;
 }
 
 /*-------------------------------------------------------------------------*/

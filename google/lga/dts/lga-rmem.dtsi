@@ -21,19 +21,19 @@
 		};
 
 		xhci_dma: xhci_dma@9010000 {
-			compatible = "xhci-dma-pool";
+			compatible = "shared-dma-pool";
 			reg = <0x00000000 0x09010000 0x00000000 0x00040000>; /* 256KB */
 			no-map;
 		};
 
 		xhci_dma_buffer: xhci_dma_buffer@9050000 {
-			compatible = "xhci-dma-pool";
+			compatible = "shared-dma-pool";
 			reg = <0x00000000 0x09050000 0x00000000 0x0000c000>; /* 48KB */
 			no-map;
 		};
 
 		xhci_dma_dram: xhci_dma_dram@97000000 {
-			compatible = "xhci-dma-pool";
+			compatible = "shared-dma-pool";
 			reg = <0x00000000 0x97000000 0x00000000 0x00400000>; /* 4MB */
 			no-map;
 		};
@@ -97,14 +97,12 @@
 
 		/* begin crash_debug_dump rmem section */
 		cdd_header: cdd_header@951f8000 {
-			reg = <0x00000000 CDD_HEADER_ADDR 0x00000000 CDD_HEADER_SIZE>;
-			/* 32KB */
+			reg = <0x00000000 0x951f8000 0x00000000 0x00008000>; /* 32KB */
 			no-map;
 		};
 
 		log_kevents: log_kevents@90200000 {
-			reg = <0x00000000 CDD_LOG_KEVENTS_ADDR 0x00000000 CDD_LOG_KEVENTS_SIZE>;
-			/* 5MB */
+			reg = <0x00000000 0x90200000 0x00000000 0x00300000>; /* 3MB */
 			no-map;
 		};
 		/* end crash_debug_dump rmem section */

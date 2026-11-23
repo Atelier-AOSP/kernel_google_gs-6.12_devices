@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-2.0-only
 
 load("@kleaf//build/kernel/kleaf:kernel.bzl", "checkpatch")
-load("//private/devices/google/common/kleaf:device_build.bzl", "device_build")
+load("//private/devices/google/common/kleaf:device_build.bzl", "device_build", "intree_module")
 load("//private/devices/google/gs201:constants.bzl", "GS201_DTBS", "GS201_MODULE_OUTS")
 load(":constants.bzl", "TANGORPRO_DTBOS", "TANGORPRO_MODULE_OUTS")
 
@@ -31,30 +31,45 @@ device_build(
     dts_srcs = glob(["dts/**"]) + [
         "//private/google-modules/soc/gs:gs.dt-bindings",
     ],
-    ext_modules = [
-        # keep sorted
-        "//private/devices/google/tangorpro/display:drm_panel.google",
-        "//private/devices/google/tangorpro/pogo:pogo_transport",
-        "//private/google-modules/amplifiers/cs35l41",
-        "//private/google-modules/amplifiers/snd_soc_wm_adsp:snd-soc-wm-adsp",
-        "//private/google-modules/bluetooth/broadcom:bluetooth.broadcom",
-        "//private/google-modules/fingerprint/fpc",
-        "//private/google-modules/gps/broadcom/bcm47765",
-        "//private/google-modules/touch/common:touch.common",
-        "//private/google-modules/touch/common/usi:touch.common.usi",
-        "//private/google-modules/touch/novatek/nt36xxx",
-        "//private/google-modules/uwb/qorvo/dw3000/kernel:uwb.dw3000",
-        "//private/google-modules/wlan/syna/dhd43752p:synadhd",
-    ],
     insmod_cfgs = glob(["insmod_cfg/*.cfg"]),
     kconfig_exts = ["Kconfig.ext.tangorpro"],
+    # keep sorted
     kconfigs = [
-        # keep sorted
-        "//private/google-modules/touch/common:touch.common.kconfig",
+        "//private/google-modules/touch/common/usi:kconfig",
     ],
     module_outs = GS201_MODULE_OUTS + TANGORPRO_MODULE_OUTS,
-    vendor_dlkm_modules_blocklists = ["vendor_dlkm.blocklist.tangorpro"],
-    vendor_ramdisk_modules_lists = ["vendor_ramdisk.modules.tangorpro"],
+    # keep sorted
+    vendor_dlkm_modules = [
+        "//private/google-modules/amplifiers/cs35l41:snd-soc-cs35l41-i2c",
+        "//private/google-modules/bluetooth/broadcom:nitrous",
+        "//private/google-modules/fingerprint/fpc:fpc1020_platform_tee",
+        "//private/google-modules/gps/broadcom/bcm47765:bbd_pps_gpio",
+        "//private/google-modules/touch/common/usi:goog_usi_stylus",
+        "//private/google-modules/touch/novatek/nt36xxx:nvt_touch",
+        "//private/google-modules/uwb/qorvo/dw3000/kernel/drivers/net/ieee802154:dw3000",
+        "//private/google-modules/uwb/qorvo/dw3000/kernel/drivers/net/ieee802154:dw3000-core-tests",
+        "//private/google-modules/uwb/qorvo/dw3000/kernel/net/mcps802154",
+        "//private/google-modules/uwb/qorvo/dw3000/kernel/net/mcps802154:mcps802154_region_fira",
+        "//private/google-modules/uwb/qorvo/dw3000/kernel/net/mcps802154:mcps802154_region_nfcc_coex",
+        "//private/google-modules/uwb/qorvo/dw3000/kernel/net/mcps802154:mcps802154_region_pctt",
+        "//private/google-modules/wlan/syna/dhd43752p:synadhd",
+    ],
+    # keep sorted
+    vendor_ramdisk_modules = [
+        intree_module("drivers/leds/leds-pwm.ko"),
+        intree_module("drivers/regulator/rt4801-regulator.ko"),
+        intree_module("drivers/regulator/tps65132-regulator.ko"),
+        intree_module("drivers/video/backlight/lp855x_bl.ko"),
+        "//private/devices/google/tangorpro/display:panel-boe-ts110f5mlg0",
+        "//private/devices/google/tangorpro/display:panel-csot-ppa957db2d",
+        "//private/devices/google/tangorpro/pogo:pogo_transport",
+        "//private/google-modules/amplifiers/cs35l41:snd-soc-cs35l41",
+        "//private/google-modules/amplifiers/cs35l41:snd-soc-cs35l41-spi",
+        "//private/google-modules/amplifiers/snd_soc_wm_adsp:snd-soc-wm-adsp",
+        "//private/google-modules/bms:google_dock",
+        "//private/google-modules/gps/broadcom/bcm47765:bcm47765_ko",
+        "//private/google-modules/soc/gs/drivers/video/backlight:rt4539_bl",
+    ],
 )
 
 # For compatibility

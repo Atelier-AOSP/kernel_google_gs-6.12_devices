@@ -58,9 +58,6 @@
 		/* RTX: configure boost to 7V through wlc chip */
 		idt,apbst_en;
 
-		/* Granvilla GPIO 2~4 */
-		idt,ben-gpios = <&max777x9_gpio 4 GPIO_ACTIVE_HIGH>;  /* EXT_BST_EN */
-		idt,boost-gpios = <&s2mpg14_gpio 3 GPIO_ACTIVE_HIGH>; /* WLC_TX_SW_EN */
 		/* idt,switch-gpios = <&p9xxx_gpio 3 GPIO_ACTIVE_HIGH>; */ /* EXT_BST_VTRX */
 		idt,extben-gpios = <&s2mpg14_gpio 2 GPIO_ACTIVE_HIGH>; /* AP2QI_EXTBST_EN */
 		/* CSP */

@@ -8,16 +8,12 @@
 #include "zuma/zuma-usb-role-sw.dtsi"
 
 &udc {
-	extcon = <&goog_usb_role_sw>;
+	usb-role-switch;
 	force_gen1;
 };
 
 &usbdrd_dwc3 {
 	maximum-speed = "super-speed";
-};
-
-&usbdrd_phy0 {
-	extcon = <&goog_usb_role_sw>;
 };
 
 &pinctrl_12 {

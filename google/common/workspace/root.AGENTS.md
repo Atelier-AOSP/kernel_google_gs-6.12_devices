@@ -55,3 +55,10 @@ The project uses **Kleaf**, which is a Bazel-based build system for the Linux ke
     - Max line length is 100 characters.
     - Every file must end with a single newline character (no multiple trailing empty lines).
     - No trailing whitespace at the end of any line.
+
+## Source Control
+- **Mandatory Sign-off:** **Every** commit made in this workspace **must** include a
+  `Signed-off-by:` tag. This is a non-negotiable requirement for all kernel
+  changes.
+- **Signing Method:** Use ONLY the `git commit -s` flag to add the signature. NEVER manually
+  construct, type, or append the `Signed-off-by:` tag in the commit message body.

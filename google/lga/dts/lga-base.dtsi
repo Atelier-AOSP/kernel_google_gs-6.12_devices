@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
 
 #include <dt-bindings/cap-sysfs/cpu-lga-power-states.h>
-#include <dt-bindings/cap-sysfs/cpuss-lga-dvfs.h>
-#include <dt-bindings/cap-sysfs/cpuss-lga-rail-vdd.h>
 #include <dt-bindings/gpio/gpio.h>
 #include <dt-bindings/gpio/google,lga.h>
 #include <dt-bindings/interconnect/google,rdo.h>
@@ -19,6 +17,7 @@
 #include <dt-bindings/power/genpd_lga.h>
 #include <dt-bindings/soc/google/google-cdd-def.h>
 #include <dt-bindings/soc/google/google-wdt-def.h>
+#include <dt-bindings/soc/google/keydebug-core-def.h>
 #include "lga-rmem.dtsi"
 #include "lga-aoc.dtsi"
 #include "lga-audio.dtsi"
@@ -603,7 +602,7 @@
 		reg-names = "ufs_hc", "ufs_top", "ufs_phy_sram", "psm_status_hsios",
 		      "psm_status_ufs_hc", "psm_status_ufs_phy";
 		clocks = <&hsios_gpio_ref_tcx0_clk>, <&hsios_aux_clk>;
-		clock-names = "ref_clk", "aux_clk";
+		clock-names = "gpio_ref_clk", "aux_clk";
 		interrupts-extended =
 		<&hsios_multicast_aggr_6_intr
 			HSIO_S_GIA_MULTICAST_AGGR_6_UFS_SD_TOP_UFS_TOP_UFS_SS_SINTERRUPT>,
@@ -651,28 +650,31 @@
 		ip-idle-index = <IP_IDLE_IDX_UFS>;
 
 		google,enable-phy-calibration;
+		/* TODO(b/348082830): disable 'google,enable-hc-pg' for now */
 		google,enable-phy-patching;
 		google,phy-patching-mode = <2>;
-		google,enable-local-rpm;
-		google,enable-local-swh8;
-		google,toggle-resetb-on-reset;
+		google,limit-reset-to-eh;
 	};
 
 	gcdd: gcdd {
 		compatible = "google,crash-debug-dump";
 		freq-names = "LIT", "MID0", "MID1", "BIG";
 		memory-region = <&cdd_header>, <&log_kevents>;
-		reg = <0 0x538c004 0 0x4>;
-		reg-names = "apc_wdt_sub_reason";
+		apc-wdt-sub-reason = <0x538c004>; // CPM BREADCRUMB2
 		panic-action = <GO_DEFAULT_ID>;
 		wdt-handle = <&wdt1>;
-		ufs-handle = <&ufs>;
 	};
 
 	gvdu: gvdu {
 		compatible = "google,volatile-debug-unlock";
 		gdmc-iface = <&goog_mba_gdmc_iface>;
 		memory-region = <&gvdu_dma_region>;
+		vdu-directive-max-size = <0x000007D0>;
+		default-debug-vector = "F8FFFFEFFFFFFFFFFFFF9F0100000000";
+		default-policy-type = "POLICY_TYPE_LGA_DEV_AP",
+				      "POLICY_TYPE_LGA_DEV_GSA",
+				      "POLICY_TYPE_LGA_RAMDUMP";
+		joint-directive-mba;
 	};
 
 	gsa: gsa-ns@e010000 {
@@ -703,7 +705,7 @@
 	};
 
 	gdmc_dhub: gdmc_dhub {
-		compatible = "google,gdmc-dhub";
+		compatible = "google,gdmc-dhub-gen1";
 		gdmc-iface = <&goog_mba_gdmc_iface>;
 	};
 
@@ -798,6 +800,8 @@
 				pmu_events {
 					l2-cachemiss-ev = <0x17>;
 					l3-cachemiss-ev = <0xA2>;
+					mem-rd-inst-ev = <0x66>;
+					mem-wr-inst-ev = <0x67>;
 				};
 				amu_events {
 					inst-ev = <0x0008>;
@@ -810,6 +814,8 @@
 				pmu_events {
 					l2-cachemiss-ev = <0x17>;
 					l3-cachemiss-ev = <0xA2>;
+					mem-rd-inst-ev = <0x66>;
+					mem-wr-inst-ev = <0x67>;
 				};
 				amu_events {
 					inst-ev = <0x0008>;
@@ -822,6 +828,8 @@
 				pmu_events {
 					l2-cachemiss-ev = <0x17>;
 					l3-cachemiss-ev = <0x2A>;
+					mem-rd-inst-ev = <0x66>;
+					mem-wr-inst-ev = <0x67>;
 				};
 				amu_events {
 					inst-ev = <0x0008>;
@@ -834,6 +842,8 @@
 				pmu_events {
 					l2-cachemiss-ev = <0x17>;
 					l3-cachemiss-ev = <0x2A>;
+					mem-rd-inst-ev = <0x66>;
+					mem-wr-inst-ev = <0x67>;
 				};
 				amu_events {
 					inst-ev = <0x0008>;
@@ -846,6 +856,8 @@
 				pmu_events {
 					l2-cachemiss-ev = <0x17>;
 					l3-cachemiss-ev = <0x2A>;
+					mem-rd-inst-ev = <0x66>;
+					mem-wr-inst-ev = <0x67>;
 				};
 				amu_events {
 					inst-ev = <0x0008>;
@@ -858,6 +870,8 @@
 				pmu_events {
 					l2-cachemiss-ev = <0x17>;
 					l3-cachemiss-ev = <0x2A>;
+					mem-rd-inst-ev = <0x66>;
+					mem-wr-inst-ev = <0x67>;
 				};
 				amu_events {
 					inst-ev = <0x0008>;
@@ -870,6 +884,8 @@
 				pmu_events {
 					l2-cachemiss-ev = <0x17>;
 					l3-cachemiss-ev = <0x2A>;
+					mem-rd-inst-ev = <0x66>;
+					mem-wr-inst-ev = <0x67>;
 				};
 				amu_events {
 					inst-ev = <0x0008>;
@@ -882,6 +898,8 @@
 				pmu_events {
 					l2-cachemiss-ev = <0x17>;
 					l3-cachemiss-ev = <0x2A>;
+					mem-rd-inst-ev = <0x66>;
+					mem-wr-inst-ev = <0x67>;
 				};
 				amu_events {
 					inst-ev = <0x0008>;
@@ -1016,7 +1034,8 @@
 				 * HC still needs to access.
 				 */
 				memory-region = <&xhci_dma>, <&xhci_dma_dram>, <&xhci_dma_buffer>;
-				num-hc-interrupters = <2>;
+				num-hc-interrupters = /bits/ 16 <2>;
+				memory-swap-enabled;
 			};
 		};
 	};
@@ -1753,8 +1772,6 @@
 	gs_domain_idle {
 		compatible = "google,gs_domain_idle";
 
-		top-power-domain = <&cpu_cluster_top>;
-
 		cpu-cluster-one {
 			power-domains = <&CPUCL1>;
 			num-cpu-freq-policies = <1>;
@@ -1767,7 +1784,7 @@
 			cpu-freq-policies = <2 3>;
 		};
 
-		cpu_cluster_top: cpu-cluster-top {
+		cpu-cluster-top {
 			power-domains = <&CPU_TOP_CL>;
 			num-cpu-freq-policies = <0>;
 		};
@@ -2432,47 +2449,36 @@
 		};
 	};
 
-	otp_cpm_shadow_syscon: otp_cpm_shadow_syscon@53d1000{
-		compatible = "google,otp-cpm-shadow-global", "syscon";
-		reg = <0x0 0x53d1000 0x0 0x1000>;
-	};
-
-	otp_bmsm_shadow_syscon: otp_bmsm_shadow_syscon@de26000{
-		compatible = "google,otp-bmsm-shadow-global", "syscon";
-		reg = <0x0 0xde26000 0x0 0x4000>;
-	};
-
-	otp_sswrp_gpcm_top_csr_syscon: otp_sswrp_gpcm_top_csr_syscon@3441f000{
-		compatible = "google,otp-sswrp-gpcm-top-csr-global", "syscon";
-		reg = <0x0 0x3441f000 0x0 0x1000>;
-	};
-
-	goog_chip_info: goog_chip_info {
+	goog_chip_info: goog_chip_info@53d1000 {
 		compatible = "google,chip-info";
+		reg = <0x0 0x53d1000 0x0 0x1000>,
+		      <0x0 0xde26000 0x0 0x4000>,
+		      <0x0 0x3441f000 0x0 0x1000>;
+		reg-names = "cpm", "bmsm", "gpcm";
 
 		ids_table: ids_table {
 			compatible = "google,lga_a0_ids";
-			google,syscon-phandle = <&otp_cpm_shadow_syscon 0>;
+			google,reg-index = <0>;
 			feature-name = "IDS table";
 			translator = "ids-translator";
 		};
 
 		dvfs_table: dvfs_table {
 			compatible = "google,lga_a0_dvfs";
-			google,syscon-phandle = <&otp_cpm_shadow_syscon 0>;
+			google,reg-index = <0>;
 			feature-name = "DVFS table";
 			translator = "dvfs-translator";
 		};
 
 		hw_feature_table: hw_feature_table {
 			compatible = "google,lga_a0_hw_feature";
-			google,syscon-phandle = <&otp_cpm_shadow_syscon 0>;
+			google,reg-index = <0>;
 			feature-name = "HW feature table";
 		};
 
 		device_table: device_table {
 			compatible = "google,lga_a0_ptde";
-			google,syscon-phandle = <&otp_cpm_shadow_syscon 0>;
+			google,reg-index = <0>;
 			feature-name = "Device table";
 			device-table;
 			visible-in-prod;
@@ -2480,7 +2486,7 @@
 
 		serial: serial {
 			compatible = "google,lga_a0_serial";
-			google,syscon-phandle = <&otp_bmsm_shadow_syscon 0>;
+			google,reg-index = <1>;
 			feature-name = "Serial table";
 			private;
 			serial-codes;
@@ -2488,7 +2494,7 @@
 
 		gpcm_asic_id: gpcm_asic_id {
 			compatible = "google,lga_a0_gpcm_asic_id";
-			google,syscon-phandle = <&otp_sswrp_gpcm_top_csr_syscon 0>;
+			google,reg-index = <2>;
 			feature-name = "GPCM ASIC ID";
 			translator = "asic-id-translator";
 			visible-in-prod;
@@ -2496,14 +2502,14 @@
 
 		ap_rom_patch_ver: ap_rom_patch_ver {
 			compatible = "google,lga_a0_ap_rom_patch_ver";
-			google,syscon-phandle = <&otp_bmsm_shadow_syscon 0>;
+			google,reg-index = <1>;
 			feature-name = "AP ROM patch version";
 			visible-in-prod;
 		};
 
 		lcs: lcs {
 			compatible = "google,lga_a0_lcs";
-			google,syscon-phandle = <&otp_bmsm_shadow_syscon 0>;
+			google,reg-index = <1>;
 			feature-name = "LCS";
 			lcs-state;
 			private;
@@ -2556,10 +2562,16 @@
 		key_down_delay = <6000>;
 		keys_down = <116 115>;
 		dbg_fn_delay = <2000>;
+		bind_s2x_version = <BIND_S2X_VERSION_2>;
 	};
 
 	power_keydebug {
 		compatible = "power-keydebug";
+	};
+
+	skip_s2m_voter: skip-s2m-voter {
+		compatible = "google,skip-s2m-voter";
+		gdmc-iface = <&goog_mba_gdmc_iface>;
 	};
 
 	cap_sysfs {

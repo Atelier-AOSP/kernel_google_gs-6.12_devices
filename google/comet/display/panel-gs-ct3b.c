@@ -1882,7 +1882,7 @@ static int spanel_get_brightness(struct thermal_zone_device *tzd, int *temp)
 	if (tzd == NULL)
 		return -EINVAL;
 
-	spanel = tzd->devdata;
+	spanel = thermal_zone_device_priv(tzd);
 
 	if (spanel && spanel->base.bl) {
 		mutex_lock(&spanel->base.bl_state_lock);

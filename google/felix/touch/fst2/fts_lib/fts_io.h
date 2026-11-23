@@ -25,7 +25,7 @@
 #define DUMMY_BYTE			0	/* /< first byte read is not
 						* Dummy byte  */
 #else
-#define SPI4_WIRE	/* /< comment if the master is SPI3 wires
+#define SPI4_WIRE	/* /< comment if the controller is SPI3 wires
 			 *  (MOSI and MISO share same line) */
 #define SPI_DELAY_CS			10	/* /< time in usec to wait
 						 * before rising the CS */

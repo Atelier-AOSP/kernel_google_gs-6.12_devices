@@ -12,6 +12,7 @@
 		__overlay__ {
 			goog_usb_role_sw: goog_usb_role_sw {
 				compatible = "google,usb-role-sw";
+				role-sw-dev = <&udc>;
 				status = "okay";
 			};
 		};

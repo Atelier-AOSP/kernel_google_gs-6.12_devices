@@ -23,7 +23,9 @@
 		"XLSION_CLI15_PIN1",
 		"XLSION_CLI15_PIN2";
 		function = "lsion_gpio";
-		drive-open-drain;
+		bias-pull-up;
+		output-disable;
+		input-enable;
 	};
 };
 

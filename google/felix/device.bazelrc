@@ -4,4 +4,4 @@
 
 build:felix --config=gs201_base
 build:felix --//private/devices/google/common:kernel=//private/devices/google/felix:felix/kernel
-build:felix --//private/google-modules/touch/common:samsung_drm
+build:felix --//private/google-modules/amplifiers/cs40l26:version=v14.5.0+v4.1.1

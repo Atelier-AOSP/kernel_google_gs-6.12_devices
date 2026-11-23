@@ -238,7 +238,7 @@ static int ppa957db2d_prepare(struct drm_panel *panel)
 	return 0;
 }
 
-static void ts110f5mlg0_set_cabc_mode(struct exynos_panel *ctx,
+static void ppa957db2d_set_cabc_mode(struct exynos_panel *ctx,
 					enum exynos_cabc_mode cabc_mode)
 {
 	u8 mode;
@@ -284,7 +284,7 @@ static int ppa957db2d_read_id(struct exynos_panel *ctx)
 	if (ctx->panel_rev < PANEL_REV_EVT2) {
 		/* hardcode 0 as reading id is not supported in this panel_rev */
 		dev_info(ctx->dev, "read_id is not supported in panel_rev: 0x%x\n", ctx->panel_rev);
-		strlcpy(ctx->panel_id, "0", PANEL_ID_MAX);
+		strscpy(ctx->panel_id, "0", PANEL_ID_MAX);
 		return 0;
 	}
 
@@ -306,7 +306,7 @@ static int ppa957db2d_read_id(struct exynos_panel *ctx)
 
 	if (read_bytes != 1) {
 		dev_warn(ctx->dev, "Unable to read panel id (%d)\n", read_bytes);
-		strlcpy(ctx->panel_id, "0", PANEL_ID_MAX);
+		strscpy(ctx->panel_id, "0", PANEL_ID_MAX);
 		return -EIO;
 	}
 
@@ -621,7 +621,7 @@ static const struct exynos_panel_funcs ppa957db2d_exynos_funcs = {
 	.panel_reset = ppa957db2d_reset,
 	.set_dimming_on = ppa957db2d_set_dimming_on,
 	.set_brightness = exynos_panel_set_brightness,
-	.set_cabc_mode = ts110f5mlg0_set_cabc_mode,
+	.set_cabc_mode = ppa957db2d_set_cabc_mode,
 	.get_panel_rev = ppa957db2d_get_panel_rev,
 	.parse_regulators = ppa957db2d_parse_regualtors,
 	.set_power = ppa957db2d_set_power,

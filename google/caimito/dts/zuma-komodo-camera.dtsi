@@ -354,10 +354,12 @@
 					 0
 					 0
 					 1000
-					 0
+					 /* AF need 7.1ms (rounded to 8ms) before I2C stable,
+					    added the remaining here */
+					 3000
 					 0
 					 /* from MCLK to first i2c */
-					 5000>;
+					 6000>;
 
 				power-down-seqs =
 					"mclk_off",
@@ -507,7 +509,9 @@
 					 0
 					 0
 					 1000
-					 0
+					 /* AF need 7.1ms (rounded to 8ms) before I2C stable,
+					    added the remaining here */
+					 8000
 					 0>;
 
 				power-down-seqs =
@@ -717,7 +721,7 @@
 				/* Thread priority */
 				transaction-thread-priority = <99>;
 
-				i2c-lock-group-id = <3>;
+				i2c-lock-group-id = <1>;
 			};
 
 			/* REAR ULTRA WIDE CAMERA */
@@ -772,7 +776,7 @@
 				resume-seqs = "reset";
 				resume-seq-types = "gpio";
 				/* from XCLR to first i2c */
-				resume-seq-delays-us = <5000>;
+				resume-seq-delays-us = <6000>;
 
 				/* suspend sequence */
 				suspend-seqs = "reset";
@@ -840,7 +844,7 @@
 				resume-seqs = "reset";
 				resume-seq-types = "gpio";
 				/* from XCLR to first i2c */
-				resume-seq-delays-us = <5000>;
+				resume-seq-delays-us = <6000>;
 
 				/* suspend sequence */
 				suspend-seqs = "reset";
@@ -962,6 +966,8 @@
 
 				/* Power sequence */
 				power-seq = <&front_camera_power_seq>;
+
+				i2c-lock-group-id = <1>;
 			};
 
 			/* EEPROM for Rear Folded Tele Camera */
@@ -1087,6 +1093,8 @@
 
 				/* Thread priority */
 				transaction-thread-priority = <99>;
+
+				i2c-lock-group-id = <1>;
 			};
 
 			/* Actuator for REAR ULTRAWIDE CAMERA */

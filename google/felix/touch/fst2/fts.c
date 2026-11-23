@@ -101,34 +101,16 @@ static void fts_pinctrl_setup(struct fts_ts_info *info, bool active);
   * Set the value of system_reseted_up flag
   * @param val value to write in the flag
   */
-void set_system_reseted_up(int val)
+static void set_system_reseted_up(int val)
 {
 	system_reseted_up = val;
-}
-
-/**
-  * Return the value of system_resetted_down.
-  * @return the flag value: 0 if not set, 1 if set
-  */
-int is_system_resetted_down(void)
-{
-	return system_reseted_down;
-}
-
-/**
-  * Return the value of system_resetted_up.
-  * @return the flag value: 0 if not set, 1 if set
-  */
-int is_system_resetted_up(void)
-{
-	return system_reseted_up;
 }
 
 /**
   * Set the value of system_reseted_down flag
   * @param val value to write in the flag
   */
-void set_system_reseted_down(int val)
+static void set_system_reseted_down(int val)
 {
 	system_reseted_down = val;
 }
@@ -1086,7 +1068,7 @@ static int gti_default_handler(void *private_data, enum gti_cmd_type cmd_type,
   * @param type type of MS frame to read
   * @return zero if success or an error code which specify the type of error
   */
-int goog_get_ms_frame(struct fts_ts_info *info, ms_frame_type_t type)
+static int goog_get_ms_frame(struct fts_ts_info *info, ms_frame_type_t type)
 {
 	u16 offset;
 	int res = 0;
@@ -1138,7 +1120,7 @@ int goog_get_ms_frame(struct fts_ts_info *info, ms_frame_type_t type)
   * @param type type of SS frame to read
   * @return zero if success or an error code which specify the type of error
   */
-int goog_get_ss_frame(struct fts_ts_info *info, ss_frame_type_t type)
+static int goog_get_ss_frame(struct fts_ts_info *info, ss_frame_type_t type)
 {
 	u16 self_force_offset = 0;
 	u16 self_sense_offset = 0;

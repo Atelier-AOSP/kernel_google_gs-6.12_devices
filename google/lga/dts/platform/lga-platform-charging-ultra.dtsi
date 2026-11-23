@@ -12,9 +12,7 @@
 };
 
 &google_cpm {
-	google,dc_limit-vbatt_min = <3510000>;
-	google,wlc_cp-start-power_limit = <15000000>; /* 15W start using CP */
-	google,wlc_cp-stop-power_limit = <10000000>; /* 10W stop using CP */
+	google,dc_limit-vbatt_low = <3510000>;
 
 	/* thermal budgets */
 	google,mdis-thermal-mitigation =
@@ -37,4 +35,13 @@
 	 4800000 4600000 4400000 4200000 4000000 3800000 3600000 3400000 3200000
 	 3000000 2800000 2600000 2400000 2200000 2000000 1800000 1600000 1400000
 	 1200000 1000000 900000  800000  700000  600000  500000  400000>;
+
+	chargers {
+		pca9468 {
+			status = "disabled";
+		};
+		ln8411 {
+			status = "okay";
+		};
+	};
 };

@@ -12,7 +12,7 @@
 	max77779,bst-on-gpio = <&s2mpg15_gpio 4 GPIO_ACTIVE_HIGH>;  /* EXT_BST_EN */
 	max77779,extbst-mode-gpio = <&s2mpg15_gpio 9 GPIO_ACTIVE_HIGH>; /* EXT_BST_MODE */
 	max77779,extbst-ctl-gpio = <&max77759_tcpc_gpio 0 GPIO_ACTIVE_HIGH>; /* OTG_PWR_EN */
-	post-init-providers = <&max77759_tcpc_gpio>;
+	post-init-providers = <&max77759_tcpc_gpio>, <&google_wlc_gpio>;
 
 	max77779,chrg-byp-en;
 

@@ -26,6 +26,7 @@
 #include "zuma/zuma-s2mpu.dtsi"
 #include "zuma/zuma-gsa.dtsi"
 #include "zumapro-gpu.dtsi"
+#include "zuma/zuma-iif.dtsi"
 #include "zumapro-tpu.dtsi"
 #include "zuma/zuma-gxp.dtsi"
 #include "zumapro-usi.dtsi"
@@ -40,6 +41,7 @@
 #include "zuma/zuma-mfc.dtsi"
 #include "zuma/zuma-bigw.dtsi"
 #include "zuma/zuma-pwm.dtsi"
+#include "zumapro-wonder.dtsi"
 
 / {
 	compatible = "google,zumapro";
@@ -87,7 +89,13 @@
 	};
 
 	chosen: chosen {
-		bootargs = "earlycon=exynos4210,mmio32,0x10870000 console=ttySAC0,115200n8 root=/dev/ram0 rw clocksource=arch_sys_counter androidboot.hardware=zumapro androidboot.hardware.platform=zumapro androidboot.debug_level=0x4948 clk_ignore_unused loop.max_part=7 loop.hw_queue_depth=31 coherent_pool=4M firmware_class.path=/vendor/firmware irqaffinity=0 androidboot.slot_suffix=_a androidboot.secure_boot=NONE sysrq_always_enabled no_console_suspend softlockup_panic=1 kasan_multi_shot kvm-arm.protected_modules=exynos-pd,pkvm_s2mpu-v9";
+		bootargs = "earlycon=exynos4210,mmio32,0x10870000 console=ttySAC0,115200n8 \
+root=/dev/ram0 rw clocksource=arch_sys_counter androidboot.hardware=zumapro \
+androidboot.hardware.platform=zumapro androidboot.debug_level=0x4948 clk_ignore_unused \
+loop.max_part=7 loop.hw_queue_depth=31 coherent_pool=4M firmware_class.path=/vendor/firmware \
+irqaffinity=0 androidboot.slot_suffix=_a androidboot.secure_boot=NONE no_console_suspend \
+softlockup_panic=1 kasan_multi_shot kvm-arm.protected_modules=exynos-pd,pkvm_s2mpu-v9,pkvm_smc \
+printk.debug_non_panic_cpus=1";
 	};
 
 	odm: odm {
@@ -849,6 +857,8 @@
 				pmu_events {
 					l2-cachemiss-ev = <0x17>;
 					l3-cachemiss-ev = <0xA2>;
+					mem-rd-inst-ev = <0x66>;
+					mem-wr-inst-ev = <0x67>;
 				};
 				amu_events {
 					inst-ev = <0x0008>;
@@ -861,6 +871,8 @@
 				pmu_events {
 					l2-cachemiss-ev = <0x17>;
 					l3-cachemiss-ev = <0xA2>;
+					mem-rd-inst-ev = <0x66>;
+					mem-wr-inst-ev = <0x67>;
 				};
 				amu_events {
 					inst-ev = <0x0008>;
@@ -873,6 +885,8 @@
 				pmu_events {
 					l2-cachemiss-ev = <0x17>;
 					l3-cachemiss-ev = <0xA2>;
+					mem-rd-inst-ev = <0x66>;
+					mem-wr-inst-ev = <0x67>;
 				};
 				amu_events {
 					inst-ev = <0x0008>;
@@ -885,6 +899,8 @@
 				pmu_events {
 					l2-cachemiss-ev = <0x17>;
 					l3-cachemiss-ev = <0xA2>;
+					mem-rd-inst-ev = <0x66>;
+					mem-wr-inst-ev = <0x67>;
 				};
 				amu_events {
 					inst-ev = <0x0008>;
@@ -897,6 +913,8 @@
 				pmu_events {
 					l2-cachemiss-ev = <0x17>;
 					l3-cachemiss-ev = <0x2A>;
+					mem-rd-inst-ev = <0x66>;
+					mem-wr-inst-ev = <0x67>;
 				};
 				amu_events {
 					inst-ev = <0x0008>;
@@ -909,6 +927,8 @@
 				pmu_events {
 					l2-cachemiss-ev = <0x17>;
 					l3-cachemiss-ev = <0x2A>;
+					mem-rd-inst-ev = <0x66>;
+					mem-wr-inst-ev = <0x67>;
 				};
 				amu_events {
 					inst-ev = <0x0008>;
@@ -921,6 +941,8 @@
 				pmu_events {
 					l2-cachemiss-ev = <0x17>;
 					l3-cachemiss-ev = <0x2A>;
+					mem-rd-inst-ev = <0x66>;
+					mem-wr-inst-ev = <0x67>;
 				};
 				amu_events {
 					inst-ev = <0x0008>;
@@ -933,6 +955,8 @@
 				pmu_events {
 					l2-cachemiss-ev = <0x17>;
 					l3-cachemiss-ev = <0x2A>;
+					mem-rd-inst-ev = <0x66>;
+					mem-wr-inst-ev = <0x67>;
 				};
 				amu_events {
 					inst-ev = <0x0008>;

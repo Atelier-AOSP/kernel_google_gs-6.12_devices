@@ -32,7 +32,7 @@
 	batoilo_upper = <8000>;
 	batoilo2_lower = <3800>;
 	batoilo2_upper = <10000>;
-	batoilo_otg_trig_lvl = <4800>;
+	batoilo2_otg_trig_lvl = <4800>;
 	batoilo2_otg_trig_lvl = <6800>;
 	batoilo_usb_trig_lvl = <4800>;
 	batoilo2_usb_trig_lvl = <6800>;
@@ -82,6 +82,9 @@
 	interrupt-parent = <&max77779_pmic_irq>;
 	interrupts = <6 IRQ_TYPE_LEVEL_LOW>;
 	non_monitored_module_ids = <HAPTICS_MITIGATION_ID>;
+
+	ifpmic_irq_drv_en;
+
 	sub_mitigation {
 		ch12 {
 			module_id = <AUDIO_MITIGATION_ID>;

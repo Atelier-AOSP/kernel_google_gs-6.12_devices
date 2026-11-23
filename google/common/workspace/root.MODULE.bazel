@@ -24,6 +24,11 @@ new_kleaf_local_repository = use_repo_rule(
     "new_kleaf_local_repository",
 )
 
+kleaf_local_repository = use_repo_rule(
+    "//build/kernel/kleaf/impl:local_repository.bzl",
+    "kleaf_local_repository",
+)
+
 new_kleaf_local_repository(
     name = "libcap",
     build_file = "build/kernel/kleaf/libcap.BUILD",
@@ -66,10 +71,22 @@ new_kleaf_local_repository(
     path = "external/pigz",
 )
 
+kleaf_local_repository(
+    name = "kmod",
+    fallback_build_file = "build/kernel/kleaf/fallback_kmod.BUILD",
+    # TODO: b/409193875 - Drop the below when external/kmod is in all manifests.
+    mandatory = False,
+    path = "external/kmod",
+)
+
 new_kleaf_local_repository(
     name = "prebuilt_ndk",
     build_file = "build/kernel/kleaf/ndk.BUILD",
-    path = "prebuilts/ndk-r26",
+    path_candidates = [
+        # do not sort
+        "prebuilts/ndk-r27",
+        "prebuilts/ndk-r26",
+    ],
 )
 
 kernel_toolchain_ext = use_extension("//build/kernel/kleaf:kernel_toolchain_ext.bzl", "kernel_toolchain_ext")
@@ -80,6 +97,8 @@ use_repo(kernel_toolchain_ext, "kleaf_host_tools")
 register_toolchains(
     "@kleaf_clang_toolchain//:all",
     "//build/kernel:hermetic_tools_toolchain",
+    "//prebuilts/build-tools:py_exec_tools_toolchain",
+    "//prebuilts/build-tools:py_toolchain_musl",
     "//prebuilts/build-tools:py_toolchain",
 )
 
@@ -91,26 +110,35 @@ bazel_dep(
 )
 bazel_dep(
     name = "bazel_skylib",
-    version = "1.5.0",
+    version = "1.7.1",
 )
 bazel_dep(
     name = "platforms",
-    version = "0.0.10",
+    version = "0.0.11",
 )
 bazel_dep(
     name = "rules_cc",
-    version = "0.0.4",
+    version = "0.1.0",
 )
 bazel_dep(
     name = "rules_pkg",
-    version = "0.10.1",
+    version = "1.0.1",
 )
 
 bazel_dep(
     name = "stardoc",
-    version = "0.6.2",
+    version = "0.7.2",
     dev_dependency = True,
     repo_name = "io_bazel_stardoc",
+)
+
+bazel_dep(
+    name = "rules_python",
+    version = "1.0.0",
+)
+bazel_dep(
+    name = "rules_shell",
+    version = "0.3.0",
 )
 
 local_path_override(
@@ -119,8 +147,8 @@ local_path_override(
 )
 
 local_path_override(
-    module_name = "apple_support",
-    path = "external/bazelbuild-apple_support",
+    module_name = "bazel_features",
+    path = "external/bazel-contrib-bazel_features",
 )
 
 local_path_override(
@@ -139,11 +167,6 @@ local_path_override(
 )
 
 local_path_override(
-    module_name = "rules_java",
-    path = "external/bazelbuild-rules_java",
-)
-
-local_path_override(
     module_name = "rules_license",
     path = "external/bazelbuild-rules_license",
 )
@@ -156,6 +179,11 @@ local_path_override(
 local_path_override(
     module_name = "rules_python",
     path = "external/bazelbuild-rules_python",
+)
+
+local_path_override(
+    module_name = "rules_shell",
+    path = "external/bazelbuild-rules_shell",
 )
 
 # ====== Keep above in sync with build/kernel/kleaf/bzlmod/bazel.MODULE.bazel =====
@@ -176,8 +204,23 @@ kernel_prebuilt_ext.declare_kernel_prebuilts(
 )
 use_repo(kernel_prebuilt_ext, "gki_prebuilts_16k")
 
-new_kleaf_local_repository(
+local_repository = use_repo_rule(
+    "@bazel_tools//tools/build_defs/repo:local.bzl",
+    "local_repository",
+)
+
+local_repository(
+    name = "nanopb-c",
+    path = "external/nanopb-c",
+)
+
+new_local_repository = use_repo_rule(
+    "@bazel_tools//tools/build_defs/repo:local.bzl",
+    "new_local_repository",
+)
+
+new_local_repository(
     name = "bionic",
-    build_file = "private/devices/google/common/workspace/bionic.BUILD.bazel",
+    build_file = "//private/devices/google/common/workspace:bionic.BUILD.bazel",
     path = "external/bionic",
 )

@@ -72,4 +72,6 @@
 
 	/* High dissipation adapter */
 	google,hda-tz-wlc;
+
+	google,support-usecase-cb;
 };

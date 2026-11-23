@@ -5,6 +5,7 @@ set -e
 
 DEVICE=
 DIST_DIR=
+FILTER=
 GCOV=
 GCOV_DIR=
 
@@ -19,6 +20,8 @@ usage: $0 [options] <DEVICE>
 
 Options:
   -s SERIAL             Use device with given serial.
+  -f FILTER             Filter KUnit test suites (glob pattern). e.g. "apc_irm_test*" or
+                        "apc_irm_test.my_test_case"
   --dist_dir DIR        Directory of dist files. Default: out/<DEVICE>/dist
   --gcov                Generate code coverage report with gcov.
   --gcov_dir DIR        Directory for gcov outputs. Default: out/<DEVICE>/gcov
@@ -31,6 +34,10 @@ function parse_args() {
     case "$1" in
       -s)
         export ANDROID_SERIAL="$2"
+        shift
+        ;;
+      -f|--filter)
+        FILTER="$2"
         shift
         ;;
       --dist_dir)
@@ -92,11 +99,6 @@ function main() {
       fail "${kernel_modules_gcno_tar} not found!" \
         "Please build ${DEVICE} with --config=testing first."
     fi
-    local kunit_modules_gcno_tar="${DIST_DIR}/kunit_modules_install.gcno.tar.gz"
-    if [[ ! -f "${kunit_modules_gcno_tar}" ]]; then
-      fail "${kunit_modules_gcno_tar} not found!" \
-        "Please build ${DEVICE} with --config=testing first."
-    fi
     local build_config_constants="common/build.config.constants"
     if [[ ! -f "${build_config_constants}" ]]; then
       fail "${build_config_constants} not found! Please run this script at repo root."
@@ -110,7 +112,6 @@ function main() {
     echo "exec \"$(realpath "${llvm_cov}")\" gcov \"\$@\"" > "${GCOV_DIR}/gcov.sh"
     chmod +x "${GCOV_DIR}/gcov.sh"
     tar -xzof "${kernel_modules_gcno_tar}" -C "${GCOV_DIR}"
-    tar -xzof "${kunit_modules_gcno_tar}" -C "${GCOV_DIR}"
   fi
 
   adb root
@@ -119,7 +120,12 @@ function main() {
   adb push "${DIST_DIR}/kunit_tests.zip" /data/local/tmp/kunit
   adb shell unzip -q /data/local/tmp/kunit/kunit_tests.zip -d /data/local/tmp/kunit
 
-  if ! adb shell sh /data/local/tmp/kunit/run_kunit_tests.sh; then
+  local run_cmd="sh /data/local/tmp/kunit/run_kunit_tests.sh"
+  if [[ -n "${FILTER}" ]]; then
+    run_cmd+=" '${FILTER}'"
+  fi
+
+  if ! adb shell "${run_cmd}"; then
     local test_failed=1
   fi
 

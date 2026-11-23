@@ -25,6 +25,15 @@
 		mboxes = <&goog_mba_cpm_iface>;
 	};
 
+	thermal_uclamp {
+		compatible = "google,thermal-uclamp";
+		google,cluster-cdev-map =
+			< &hayes_0     HW_DT_CDEV_LIT >,
+			< &hunter_0    HW_DT_CDEV_MID >,
+			< &hunter_3    HW_DT_CDEV_BIG_MID >,
+			< &hunterelp_0 HW_DT_CDEV_BIG >;
+	};
+
 	thermal_devfreq_cdev {
 		compatible = "google,devfreq-tj-cdev";
 		thermal-hw-cdev-id = <HW_DT_CDEV_GPU>;
@@ -67,7 +76,7 @@
 		big_thermal: BIG {
 			polling-delay = <0>;
 			polling-delay-passive = <0>;
-			thermal-sensors = <&tmu_thermal HW_TZ_BIG>;
+			thermal-sensors = <&tmu_thermal TZ_BIG>;
 
 			trips {
 				big_cold: big-cold {
@@ -152,7 +161,7 @@
 		big_mid_thermal: BIG_MID {
 			polling-delay = <0>;
 			polling-delay-passive = <0>;
-			thermal-sensors = <&tmu_thermal HW_TZ_BIG_MID>;
+			thermal-sensors = <&tmu_thermal TZ_BIG_MID>;
 
 			trips {
 				big_mid_cold: big-mid-cold {
@@ -234,7 +243,7 @@
 		mid_thermal: MID {
 			polling-delay = <0>;
 			polling-delay-passive = <0>;
-			thermal-sensors = <&tmu_thermal HW_TZ_MID>;
+			thermal-sensors = <&tmu_thermal TZ_MID>;
 
 			trips {
 				mid_cold: mid-cold {
@@ -316,7 +325,7 @@
 		little_thermal: LITTLE {
 			polling-delay = <0>;
 			polling-delay-passive = <0>;
-			thermal-sensors = <&tmu_thermal HW_TZ_LIT>;
+			thermal-sensors = <&tmu_thermal TZ_LIT>;
 
 			trips {
 				little_cold: little-cold {
@@ -397,7 +406,7 @@
 		gpu_thermal: GPU {
 			polling-delay = <0>;
 			polling-delay-passive = <0>;
-			thermal-sensors = <&tmu_thermal HW_TZ_GPU>;
+			thermal-sensors = <&tmu_thermal TZ_GPU>;
 
 			trips {
 				gpu_cold: gpu-cold {
@@ -474,7 +483,7 @@
 		tpu_thermal: TPU {
 			polling-delay = <0>;
 			polling-delay-passive = <0>;
-			thermal-sensors = <&tmu_thermal HW_TZ_TPU>;
+			thermal-sensors = <&tmu_thermal TZ_TPU>;
 
 			trips {
 				tpu_cold: tpu-cold {
@@ -545,7 +554,7 @@
 		aur_thermal: AUR {
 			polling-delay = <0>;
 			polling-delay-passive = <0>;
-			thermal-sensors = <&tmu_thermal HW_TZ_AUR>;
+			thermal-sensors = <&tmu_thermal TZ_AUR>;
 
 			trips {
 				aur_cold: aur-cold {
@@ -611,7 +620,7 @@
 		isp_thermal: ISP {
 			polling-delay = <0>;
 			polling-delay-passive = <0>;
-			thermal-sensors = <&tmu_thermal HW_TZ_ISP>;
+			thermal-sensors = <&tmu_thermal TZ_ISP>;
 
 			trips {
 				isp_alert0: isp-alert0 {
@@ -672,7 +681,7 @@
 		};
 
 		mem_thermal: MEM {
-			thermal-sensors = <&tmu_thermal HW_TZ_MEM>;
+			thermal-sensors = <&tmu_thermal TZ_MEM>;
 
 			trips {
 				mem_alert0: mem-alert0 {
@@ -734,7 +743,7 @@
 		};
 
 		aoc_thermal: AOC {
-			thermal-sensors = <&tmu_thermal HW_TZ_AOC>;
+			thermal-sensors = <&tmu_thermal TZ_AOC>;
 
 			trips {
 				aoc_cold: aoc-cold {
@@ -788,6 +797,65 @@
 				/* hardlimit param */
 
 				/* Tj control offset - mC */
+			};
+		};
+	};
+
+	powercap_tree: powercap-tree {
+		compatible = "google,powercap-tree";
+
+		package {
+			google,node-type = <GPOWERCAP_NODE_VIRTUAL>;
+
+			soc {
+				google,node-type = <GPOWERCAP_NODE_VIRTUAL>;
+
+				little-cluster {
+					google,node-type = <GPOWERCAP_NODE_CPU>;
+					google,device-phandle = <&hayes_0>;
+					google,cdev-id = <HW_DT_CDEV_LIT>;
+				};
+
+				mid-cluster {
+					google,node-type = <GPOWERCAP_NODE_CPU>;
+					google,device-phandle = <&hunter_0>;
+					google,cdev-id = <HW_DT_CDEV_MID>;
+				};
+
+				big_and_big_mid {
+					google,node-type = <GPOWERCAP_NODE_VIRTUAL_VOLTAGE>;
+
+					big-mid-cluster {
+						google,node-type = <GPOWERCAP_NODE_CPU>;
+						google,device-phandle = <&hunter_3>;
+						google,cdev-id = <HW_DT_CDEV_BIG_MID>;
+					};
+
+					big-cluster {
+						google,node-type = <GPOWERCAP_NODE_CPU>;
+						google,device-phandle = <&hunterelp_0>;
+						google,cdev-id = <HW_DT_CDEV_BIG>;
+					};
+
+				};
+
+				gpu {
+					google,node-type = <GPOWERCAP_NODE_DEVFREQ>;
+					google,device-phandle = <&gpu>;
+					google,cdev-id = <HW_DT_CDEV_GPU>;
+				};
+
+				aur {
+					google,node-type = <GPOWERCAP_NODE_DEVFREQ>;
+					google,device-phandle = <&gxp>;
+					google,cdev-id = <HW_DT_CDEV_AUR>;
+				};
+
+				tpu {
+					google,node-type = <GPOWERCAP_NODE_DEVFREQ>;
+					google,device-phandle = <&edgetpu>;
+					google,cdev-id = <HW_DT_CDEV_TPU>;
+				};
 			};
 		};
 	};
